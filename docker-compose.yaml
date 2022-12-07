@@ -1,0 +1,32 @@
+version: "3"
+services:
+  strapi:
+    build:
+      context: .
+      dockerfile: strapi.Dockerfile
+      args:
+        - DB_CLIENT_ARG=$DB_CLIENT
+        - DB_HOST_ARG=$DB_HOST
+        - DB_PORT_ARG=$DB_PORT
+        - DB_NAME_ARG=$DB_NAME
+        - DB_USER_ARG=$DB_USER
+        - DB_PSWD_ARG=$DB_PSWD
+        - DB_SSL_ARG=$DB_SSL
+    container_name: "strapi"
+    restart: always
+    ports:
+      - "$STRAPI_PORT:1337"
+    volumes:
+      - ./strapi:/strapi
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+    container_name: strapi-db
+    restart: always
+    environment:
+      - POSTGRES_USER=$DB_USER
+      - POSTGRES_PASSWORD=$DB_PSWD
+      - POSTGRES_DB=$DB_NAME
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
